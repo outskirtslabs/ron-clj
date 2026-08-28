@@ -1,9 +1,9 @@
 {
   "git": {
-    "my/dev-repl/3a298ad1d16875ff841079b1bfab087d3ef817ba": {
+    "my/dev-repl/f053984effdc6c78b1d1ce8a8878b00639854db8": {
       "common_dir": "https/github.com/Ramblurr/clojure-dev-repl",
-      "rev": "3a298ad1d16875ff841079b1bfab087d3ef817ba",
-      "sha256": "00isarmpyyb7ws68jw0y1qbqg4l0mf9z4fwmvhry9095cjm40kmn",
+      "rev": "f053984effdc6c78b1d1ce8a8878b00639854db8",
+      "sha256": "00zjz84zl1c3zqi0nzraicrzrg75j4cd805vvx65iva56931m51m",
       "url": "https://github.com/Ramblurr/clojure-dev-repl.git"
     },
     "outskirtslabs/bb-tasks/9dbc6d77384b51ffde69007e98a0420b3cf6a0a7": {
@@ -89,17 +89,17 @@
     "com/amazonaws/jmespath-java/1.12.49/jmespath-java-1.12.49.pom": {
       "sha256": "2b7abc740a413396f32caea740f2187af8c7aa728337e13b4c72327f46e10f7a"
     },
-    "com/clojure-goes-fast/clj-async-profiler/1.7.0/clj-async-profiler-1.7.0.jar": {
-      "sha256": "48b3a0bc68ed4cff171098fb11ff744770e9fbb3a3d15e07998c08b2721e1467"
+    "com/clojure-goes-fast/clj-async-profiler/1.8.0/clj-async-profiler-1.8.0.jar": {
+      "sha256": "d57abd49da9496226c1fbfa46bf3c5af7cf976cc1e6b5869178721bedbdf7569"
     },
-    "com/clojure-goes-fast/clj-async-profiler/1.7.0/clj-async-profiler-1.7.0.pom": {
-      "sha256": "16364d91e2d1dc5ec9bae091f4b4a823c06871980adb44cded32925dee6378bf"
+    "com/clojure-goes-fast/clj-async-profiler/1.8.0/clj-async-profiler-1.8.0.pom": {
+      "sha256": "2f6190777d665a482297e48e1c19e1ceb304fc8ba74e3c3a8dde9a0a7591edb5"
     },
-    "com/cnuernber/charred/1.037/charred-1.037.jar": {
-      "sha256": "eb8d003309209a6940b3173ca479f766aa4664964ade363e69746ab78573c46a"
+    "com/cnuernber/charred/1.042/charred-1.042.jar": {
+      "sha256": "8b1df1064dd52168afd289f5204d77f4cea9b4fc9002d8e6f33c5e4824c9e01c"
     },
-    "com/cnuernber/charred/1.037/charred-1.037.pom": {
-      "sha256": "89f8f280072429fc797d840c93fbfd4d7a9a419f6cb2e55d1f967756f291edcb"
+    "com/cnuernber/charred/1.042/charred-1.042.pom": {
+      "sha256": "ad175b3d8d278ed9c594d52e572a118dc3334bf937fe162b12696986915903ee"
     },
     "com/cognitect/aws/api/0.8.824/api-0.8.824.jar": {
       "sha256": "4419ad593f5dd1852100aa4fb34afe1ff54b1f24251886666ba30db5cc4169ec"
@@ -311,11 +311,11 @@
     "dev/weavejester/hashp/0.5.1/hashp-0.5.1.pom": {
       "sha256": "76cb5f1b0f683a643ecf3f406713e938b7c516f5207c97b370a9d291cf617618"
     },
-    "djblue/portal/0.65.0/portal-0.65.0.jar": {
-      "sha256": "92cdd3f72489642d5235b2d8d0e3af5db12d39298360b9c752a507701da97f08"
+    "djblue/portal/0.67.2/portal-0.67.2.jar": {
+      "sha256": "8bf76abb604fed1ce01c7d27651342cfe9433948927b876fba17c6897ae3cc52"
     },
-    "djblue/portal/0.65.0/portal-0.65.0.pom": {
-      "sha256": "067a6fc860238bd09bae1e34f38d1b9e05c1a4706f1e53f22c8140fde56c4781"
+    "djblue/portal/0.67.2/portal-0.67.2.pom": {
+      "sha256": "70283641c3cdcbfc2d21df54ddf7a73c8315a6799ba15cef68f258ca69ac8829"
     },
     "eu/maveniverse/maven/mima/context/2.4.44/context-2.4.44.jar": {
       "sha256": "81f0dab4c5f0cf59a53faf8b864960b1629d7d7f174f0c26ed6319e2fec1984d"
