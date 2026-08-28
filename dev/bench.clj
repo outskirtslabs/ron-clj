@@ -2,8 +2,8 @@
 ;; Run: clojure -M:dev:kaocha -e '(load-file "dev/bench.clj")'
 (ns bench
   (:require
-   [charred.api :as charred]
-   [ol.ron :as ron])
+   [ol.ron :as ron]
+   [s-exp.oda :as oda])
   (:import
    [ol.ron Ron]))
 
@@ -43,4 +43,4 @@
 (bench "ron/read-string (RON -> Clojure)" ron-doc #(ron/read-string %))
 (bench "Ron/parseJson (JSON -> model)" json-doc #(Ron/parseJson %))
 (bench "json->ron compact" json-doc #(ron/json->ron % {:mode :compact}))
-(bench "charred read-json (reference)" json-doc #(charred/read-json %))
+(bench "oda/parse (reference)" json-doc #(oda/parse %))

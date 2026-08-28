@@ -3,11 +3,11 @@
 (ns ol.ron-conformance-test
   "Manifest-driven RON v0.3.0 conformance tests."
   (:require
-   [charred.api :as charred]
    [clojure.java.io :as io]
    [clojure.string :as str]
    [clojure.test :refer [deftest is testing]]
-   [ol.ron :as ron])
+   [ol.ron :as ron]
+   [s-exp.oda :as oda])
   (:import
    [java.nio.charset StandardCharsets]
    [java.security MessageDigest]
@@ -19,17 +19,17 @@
 (def vocab-root (io/file corpus-root "vocabularies"))
 
 (def conformance-manifest
-  (charred/read-json (io/file conformance-root "manifest.json") :key-fn keyword))
+  (oda/parse (slurp (io/file conformance-root "manifest.json")) {:key-fn keyword}))
 (def rfc-manifest
-  (charred/read-json (io/file rfc-root "manifest.json") :key-fn keyword))
+  (oda/parse (slurp (io/file rfc-root "manifest.json")) {:key-fn keyword}))
 (def vocab-manifest
-  (charred/read-json (io/file vocab-root "manifest.json") :key-fn keyword))
+  (oda/parse (slurp (io/file vocab-root "manifest.json")) {:key-fn keyword}))
 
 (defn fixture ^String [root path]
   (slurp (io/file root path)))
 
 (defn json-value [text]
-  (charred/read-json text :bigdec true))
+  (oda/parse text))
 
 (defn sha256 [^bytes bytes]
   (let [digest (.digest (MessageDigest/getInstance "SHA-256") bytes)]
@@ -172,9 +172,9 @@
                    (ron/json->ron (fixture rfc-root inputJSON) {:mode :canonical}))))))
 
 (deftest rfc8785-number-serialization
-  (let [vectors (charred/read-json
-                 (io/file rfc-root (:numberSerialization rfc-manifest))
-                 :key-fn keyword)]
+  (let [vectors (oda/parse
+                 (fixture rfc-root (:numberSerialization rfc-manifest))
+                 {:key-fn keyword})]
     (doseq [{:keys [ieee754Hex expectedJSON expectedCanonicalRON
                     expectedCanonicalRONSHA256]}
             (:finite vectors)]

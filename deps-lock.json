@@ -95,12 +95,6 @@
     "com/clojure-goes-fast/clj-async-profiler/1.8.0/clj-async-profiler-1.8.0.pom": {
       "sha256": "2f6190777d665a482297e48e1c19e1ceb304fc8ba74e3c3a8dde9a0a7591edb5"
     },
-    "com/cnuernber/charred/1.042/charred-1.042.jar": {
-      "sha256": "8b1df1064dd52168afd289f5204d77f4cea9b4fc9002d8e6f33c5e4824c9e01c"
-    },
-    "com/cnuernber/charred/1.042/charred-1.042.pom": {
-      "sha256": "ad175b3d8d278ed9c594d52e572a118dc3334bf937fe162b12696986915903ee"
-    },
     "com/cognitect/aws/api/0.8.824/api-0.8.824.jar": {
       "sha256": "4419ad593f5dd1852100aa4fb34afe1ff54b1f24251886666ba30db5cc4169ec"
     },
@@ -289,6 +283,12 @@
     },
     "com/nextjournal/beholder/1.0.2/beholder-1.0.2.pom": {
       "sha256": "2d12644867503df2e87868cbc14ddd7852a86ae9b6756fd0278ea508ad1de2ee"
+    },
+    "com/s-exp/oda/1.0.0-alpha41/oda-1.0.0-alpha41.jar": {
+      "sha256": "1cdeeabb8ef30b4e71157bceb10a21287b5b2ecefbceecf7df23136d612b7751"
+    },
+    "com/s-exp/oda/1.0.0-alpha41/oda-1.0.0-alpha41.pom": {
+      "sha256": "98ec8f95b8bf4001cda4d0567ebdf680e5752e9637d42ef1b8868fbcef09d672"
     },
     "com/sun/activation/all/1.2.0/all-1.2.0.pom": {
       "sha256": "1d8518e3ac7532a104e4f7be77def37c982e530723c6bdb3d67708cce2b0c2c4"
