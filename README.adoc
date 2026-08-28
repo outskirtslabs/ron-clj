@@ -29,9 +29,9 @@ A Clojars release is not available yet. Use a git dependency:
 [source,clojure]
 ----
 ;; deps.edn
-{:deps {com.outskirtslabs/ron
+{:deps {com.outskirtslabs/ron-clj
         {:git/url "https://github.com/outskirtslabs/ron-clj.git"
-         :git/sha "57a92b8ab7a48fe7718f5fc8967dec45154fe005"}}}
+         :git/sha "a47cff6a6a5657df74b25e63ac0deb1b7ebd04e3"}}}
 ----
 
 `ol.ron` requires JDK 25 and Clojure 1.12 or newer, but has no other dependencies.
