@@ -22,8 +22,8 @@
         pkgs:
         clj-helpers.lib.mkCljLib {
           inherit pkgs;
-          name = "TODO";
-          version = "0.0.TODO";
+          name = "ron-clj";
+          version = "0.0.1";
           src = ./.;
           prepAliases = [
             "dev"

@@ -19,8 +19,11 @@
            :jmh    {:extra-paths ["bench" "target/jmh-classes"]
                     :extra-deps  {jmh-clojure/jmh-clojure {:mvn/version "0.4.1"}}
                     :main-opts   ["-m" "ol.ron.jmh"]}
-           :neil   {:project {:name        com.outskirtslabs/TODO
-                              :url         "https://example.com/TODO"
-                              :license     {:id "TODO"}
-                              :description ""
-                              :version     "0.0.TODO"}}}}
+           :neil   {:project {:name        com.outskirtslabs/ron-clj
+                              :url         "https://github.com/outskirtslabs/ron-clj"
+                              :license     {:id "MIT"}
+                              :description "Fast RON (Readable Object Notation) reader and writer for Clojure"
+                              :platforms   [:clj]
+                              :created     "2026-06-12"
+                              :status      :experimental
+                              :version     "0.0.1"}}}}

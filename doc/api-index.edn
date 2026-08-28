@@ -1,0 +1,16 @@
+{:api-index/version 1,
+ :component "ol.ron",
+ :version "next",
+ :namespaces
+ {"ol.ron"
+  {:page "api/ol-ron.adoc",
+   :vars
+   {"json->ron" "json--GT-ron",
+    "json-bytes->ron-bytes" "json-bytes--GT-ron-bytes",
+    "read-bytes" "read-bytes",
+    "read-string" "read-string",
+    "ron->json" "ron--GT-json",
+    "ron-bytes->json-bytes" "ron-bytes--GT-json-bytes",
+    "write" "write",
+    "write-bytes" "write-bytes",
+    "write-string" "write-string"}}}}

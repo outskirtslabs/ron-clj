@@ -1,0 +1,120 @@
+= Contributing
+
+Contributions are welcome.
+
+Read the https://docs.outskirtslabs.com/contributing-guide[Outskirts Labs Contributing Guide] before you send a change.
+
+== Set up
+
+clj-ron requires JDK 25 and Clojure 1.12 or newer.
+The Nix development shell includes the required tools.
+
+[source,bash]
+----
+nix develop
+bb ci
+----
+
+Run `bb ci` before you send a change. It checks formatting, runs clj-kondo, and runs the tests.
+
+The Java build uses `--release 25`, `-Xlint:all`, and `-Werror`.
+
+== Test scalar and Vector code
+
+Start with a clean Java build:
+
+[source,bash]
+----
+clojure -T:build clean
+clojure -T:build compile-java
+----
+
+Then run the test suite three ways:
+
+[source,bash]
+----
+clojure -M:kaocha
+clojure -J-Dol.ron.vector=false -M:kaocha
+clojure -J--add-modules=jdk.incubator.vector -M:kaocha
+----
+
+The first command tests normal scalar startup without the incubator module. The second command tests the explicit off switch. The last command tests Vector code. Send a change only after all three runs pass.
+
+== Run benchmarks
+
+Use a quick run while you work:
+
+[source,bash]
+----
+bb jmh quick scalar repeated-records read-string write-string-compact
+bb jmh quick vector long-ascii read-bytes write-bytes-compact
+----
+
+Use a full run before you make a performance claim:
+
+[source,bash]
+----
+bb jmh full scalar
+bb jmh full vector
+----
+
+A quick run uses one fork, two one-second warmups, and three one-second measurements. It selects tiny objects, repeated records, and long ASCII strings.
+
+A full run uses two forks, five two-second warmups, and five two-second measurements. It runs every payload in `bench/ol/ron/payloads.clj`.
+
+Compare runs from the same JDK, computer, heap size, payload, and output mode. Use full runs for final numbers. Correct RON output takes priority over speed.
+
+=== Reference results
+
+These results came from OpenJDK 25.0.4. JMH used two forks and the repeated-record payload.
+
+[cols="2,2,2,1",options="header"]
+|===
+|Operation
+|Previous result
+|Direct implementation
+|Allocation reduction
+
+|`read-string`
+|4.747 ms, 16.49 MB/op
+|3.429 ms, 5.90 MB/op
+|64%
+
+|compact `write-string`
+|4.335 ms, 8.41 MB/op
+|2.858 ms, 0.65 MB/op
+|92%
+
+|pretty `write-string`
+|6.336 ms, 19.05 MB/op
+|3.252 ms, 5.79 MB/op
+|70%
+|===
+
+For long ASCII strings, Vector byte reading ran 5.7 times faster than scalar reading. Vector byte writing ran 3.0 times faster. Tiny-object results stayed within 5% of scalar speed.
+
+The number-array `write-bytes` test returned 49,593 bytes and allocated 49,657 bytes per operation. The stream test allocated 40 bytes per operation.
+
+== Implementation Notes
+
+The stream writer uses a pooled 64 KiB buffer.
+Never store caller data or an output stream in pooled state.
+
+Vector support is optional. Scalar code must run when the JVM cannot resolve `jdk.incubator.vector`. Put `VECTOR` first in any short-circuit condition that refers to `VectorScan`. Otherwise, the JVM can load an incubator class before it selects the scalar path.
+
+`-XX:+UseCompactObjectHeaders` can reduce allocation on supported JDKs. Callers may enable it, but clj-ron does not require it.
+
+`test/ron/` contains the RON v0.3 conformance, RFC 8785, and vocabulary fixtures. Treat these files as upstream test data. Never edit a fixture to hide an implementation bug. When you import a new corpus, update its manifest and run all three test commands.
+
+== Build the documentation
+
+Run these commands after you change the README, public API, public docstrings, changelog, security policy, or this file:
+
+[source,bash]
+----
+clojure -T:build clean
+clojure -T:build compile-java
+bb gen-docs
+----
+
+The clean build prevents stale source copies in `target/classes` from creating duplicate API entries.

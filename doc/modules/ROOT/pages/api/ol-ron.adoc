@@ -1,0 +1,290 @@
+= ol.ron
+
+
+Fast RON (Readable Object Notation) for Clojure.
+
+RON keeps the JSON data model while removing punctuation where the meaning is
+unambiguous. Pretty output is the default. Compact output preserves available
+member order, and canonical output implements RFC 8785 and I-JSON.
+
+<<read-string,`read-string`>> and <<read-bytes,`read-bytes`>> parse directly into Clojure data.
+<<write-string,`write-string`>>, <<write-bytes,`write-bytes`>>, and <<write,`write`>> render Clojure data directly.
+<<ron--GT-json,`ron->json`>> and <<json--GT-ron,`json->ron`>> preserve number source text outside canonical
+mode.
+
+[#ron--GT-json]
+== ron->json
+
+
+
+
+[source,clojure]
+----
+(ron->json ron)
+(ron->json ron opts)
+----
+
+Converts RON text to JSON text.
+
+Pretty and compact modes preserve parsed member order and number spelling.
+Canonical mode applies RFC 8785 and I-JSON.
+
+Options:
+
+| key          | description
+|--------------|------------
+| `:mode`      | `:pretty` (default), `:compact`, or `:canonical`
+| `:pretty`    | Compatibility option used only when `:mode` is absent
+| `:max-depth` | Maximum object/array nesting depth (default `1000`)
+
+See also <<json--GT-ron,`json->ron`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L76-L95[source,window=_blank]
+
+'''
+
+[#json--GT-ron]
+== json->ron
+
+
+
+
+[source,clojure]
+----
+(json->ron json)
+(json->ron json opts)
+----
+
+Converts JSON text to RON text.
+
+Pretty output is the default and elides non-empty root-object braces. Typed
+value hooks replace values by path before rendering and do not recurse into a
+replacement value.
+
+Options:
+
+| key                  | description
+|----------------------|------------
+| `:mode`              | `:pretty` (default), `:compact`, or `:canonical`
+| `:pretty`            | Compatibility option used only when `:mode` is absent
+| `:max-depth`         | Maximum object/array nesting depth (default `1000`)
+| `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`
+
+See also <<ron--GT-json,`ron->json`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L97-L117[source,window=_blank]
+
+'''
+
+[#read-string]
+== read-string
+
+
+
+
+[source,clojure]
+----
+(read-string ron)
+(read-string ron opts)
+----
+
+Parses RON text directly into Clojure data.
+
+Objects become maps, arrays become vectors, integers become longs or bigints,
+and decimal/exponent numbers become doubles.
+
+Options:
+
+| key          | description
+|--------------|------------
+| `:key-fn`    | Function applied to every object key (default `identity`)
+| `:max-depth` | Maximum object/array nesting depth (default `1000`)
+
+The built-in `identity` and `keyword` key functions use cached key paths.
+See also <<read-bytes,`read-bytes`>> and <<write-string,`write-string`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L119-L138[source,window=_blank]
+
+'''
+
+[#read-bytes]
+== read-bytes
+
+
+
+
+[source,clojure]
+----
+(read-bytes input)
+(read-bytes input opts)
+----
+
+Parses a UTF-8 byte array directly into Clojure data.
+
+Malformed UTF-8 throws `ol.ron.Ron$ParseException` with a byte offset.
+
+Options:
+
+| key          | description
+|--------------|------------
+| `:key-fn`    | Function applied to every object key (default `identity`)
+| `:max-depth` | Maximum object/array nesting depth (default `1000`)
+
+See also <<read-string,`read-string`>> and <<write-bytes,`write-bytes`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L140-L157[source,window=_blank]
+
+'''
+
+[#write-string]
+== write-string
+
+
+
+
+[source,clojure]
+----
+(write-string data)
+(write-string data opts)
+----
+
+Renders Clojure data directly as RON text.
+
+Map keys may be strings, keywords, or symbols. Values may be nil, booleans,
+strings, finite numbers, keywords, symbols, maps, and sequential collections.
+
+Options:
+
+| key       | description
+|-----------|------------
+| `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
+| `:pretty` | Compatibility option used only when `:mode` is absent
+| `:max-depth` | Maximum collection nesting depth (default `1000`)
+
+See also <<write-bytes,`write-bytes`>> and <<read-string,`read-string`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L159-L177[source,window=_blank]
+
+'''
+
+[#write-bytes]
+== write-bytes
+
+
+
+
+[source,clojure]
+----
+(write-bytes data)
+(write-bytes data opts)
+----
+
+Renders Clojure data directly as UTF-8 RON bytes.
+
+Options:
+
+| key       | description
+|-----------|------------
+| `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
+| `:pretty` | Compatibility option used only when `:mode` is absent
+| `:max-depth` | Maximum collection nesting depth (default `1000`)
+
+See also <<write,`write`>> and <<write-string,`write-string`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L179-L194[source,window=_blank]
+
+'''
+
+[#write]
+== write
+
+
+
+
+[source,clojure]
+----
+(write data output-stream)
+(write data output-stream opts)
+----
+
+Writes UTF-8 RON to `output-stream`, flushes it, and returns it.
+
+The function does not close the caller's stream.
+
+Options:
+
+| key       | description
+|-----------|------------
+| `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
+| `:pretty` | Compatibility option used only when `:mode` is absent
+| `:max-depth` | Maximum collection nesting depth (default `1000`)
+
+See also <<write-bytes,`write-bytes`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L196-L213[source,window=_blank]
+
+'''
+
+[#ron-bytes--GT-json-bytes]
+== ron-bytes->json-bytes
+
+
+
+
+[source,clojure]
+----
+(ron-bytes->json-bytes input)
+(ron-bytes->json-bytes input opts)
+----
+
+Converts UTF-8 RON bytes to UTF-8 JSON bytes.
+
+Options:
+
+| key          | description
+|--------------|------------
+| `:mode`      | `:pretty` (default), `:compact`, or `:canonical`
+| `:pretty`    | Compatibility option used only when `:mode` is absent
+| `:max-depth` | Maximum object/array nesting depth (default `1000`)
+
+See also <<ron--GT-json,`ron->json`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L215-L230[source,window=_blank]
+
+'''
+
+[#json-bytes--GT-ron-bytes]
+== json-bytes->ron-bytes
+
+
+
+
+[source,clojure]
+----
+(json-bytes->ron-bytes input)
+(json-bytes->ron-bytes input opts)
+----
+
+Converts UTF-8 JSON bytes to UTF-8 RON bytes.
+
+Options:
+
+| key                  | description
+|----------------------|------------
+| `:mode`              | `:pretty` (default), `:compact`, or `:canonical`
+| `:pretty`            | Compatibility option used only when `:mode` is absent
+| `:max-depth`         | Maximum object/array nesting depth (default `1000`)
+| `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`
+
+See also <<json--GT-ron,`json->ron`>>.
+
+[.api-source]
+link:https://github.com/outskirtslabs/ron-clj/blob/main/src/ol/ron.clj#L232-L251[source,window=_blank]

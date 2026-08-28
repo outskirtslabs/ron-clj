@@ -1,0 +1,6 @@
+SPDXVersion: SPDX-2.1
+DataLicense: CC0-1.0
+PackageName: ron-clj
+PackageOriginator: Casey Link <casey@outskirtslabs.com>
+PackageHomePage: https://github.com/outskirtslabs/ron-clj
+PackageLicenseDeclared: MIT

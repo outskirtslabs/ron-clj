@@ -1,0 +1,100 @@
+= ol.ron
+
+____
+Fast zero-dependency https://github.com/starfederation/ron[RON (Readable Object Notation)] reader and writer for Clojure.
+____
+
+image:https://img.shields.io/badge/doc-outskirtslabs-orange.svg[doc,link=https://docs.outskirtslabs.com/ol.ron/next/]
+image:https://img.shields.io/badge/status-experimental-red.svg[status: experimental,link=https://docs.outskirtslabs.com/open-source-vital-signs#experimental]
+image:https://ci.outskirtslabs.com/repos/github/outskirtslabs/ron-clj/badge.svg[alt=nixbot,link=https://ci.outskirtslabs.com/repos/github/outskirtslabs/ron-clj]
+
+RON is a data interchange format like JSON.
+It represents null, booleans, numbers, strings, arrays, and objects.
+
+RON keeps the JSON data model but removes punctuation when the meaning is clear.
+Strings can be bare, commas are optional, and a root object's braces can be omitted.
+
+`ol.ron` reads and writes Clojure data directly. It also converts RON and JSON text or UTF-8 bytes.
+Pretty, compact, and canonical output modes are available.
+In canonical mode, data writers produce canonical RON; RON-to-JSON conversion produces RFC 8785 canonical JSON and enforces I-JSON.
+
+This is Readable Object Notation, not https://github.com/ron-rs/ron[Rusty Object Notation].
+
+Project status: *https://docs.outskirtslabs.com/open-source-vital-signs#experimental[Experimental]*. It tracks the evolving RON specification and currently passes the v0.3.0 conformance suite.
+
+== Installation
+
+A Clojars release is not available yet. Use a git dependency:
+
+[source,clojure]
+----
+;; deps.edn
+{:deps {com.outskirtslabs/ron
+        {:git/url "https://github.com/outskirtslabs/ron-clj.git"
+         :git/sha "57a92b8ab7a48fe7718f5fc8967dec45154fe005"}}}
+----
+
+`ol.ron` requires JDK 25 and Clojure 1.12 or newer, but has no other dependencies.
+The scalar implementation works without optional JDK modules.
+To accelerate long clean ASCII spans, opt in to the Vector API:
+
+[source,bash]
+----
+clojure -J--add-modules=jdk.incubator.vector -M
+----
+
+Set `-Dol.ron.vector=false` to disable Vector code in a JVM that includes the module.
+Note that vector acceleration does not materially improve typical short RON tokens, so don't bend over backward to enable it.
+
+== Quick Start
+
+[source,clojure]
+----
+(require '[ol.ron :as ron])
+
+(def text
+  (ron/write-string
+   {:name "Ada"
+    :roles ["admin" "writer"]
+    :active true}))
+
+text
+;; => "name Ada\nroles [admin writer]\nactive true\n"
+
+(ron/read-string text {:key-fn keyword})
+;; => {:name "Ada", :roles ["admin" "writer"], :active true}
+
+(ron/ron->json text {:mode :compact})
+;; => "{\"name\":\"Ada\",\"roles\":[\"admin\",\"writer\"],\"active\":true}"
+----
+
+== Core APIs
+
+* `read-string` and `write-string` parse and render Clojure data as RON text.
+* `read-bytes` and `write-bytes` parse and render Clojure data as UTF-8 byte arrays.
+* `write` renders UTF-8 RON to an output stream. It flushes and returns the stream but does not close it.
+* `ron->json` and `json->ron` convert text. `ron-bytes->json-bytes` and `json-bytes->ron-bytes` are their UTF-8 byte-array equivalents.
+
+== Documentation
+
+* https://docs.outskirtslabs.com/ol.ron/next/[Docs]
+* https://docs.outskirtslabs.com/ol.ron/next/api[API Reference]
+* https://github.com/outskirtslabs/ron-clj/issues[Support via GitHub Issues]
+
+== Output Modes
+
+* `:pretty` writes multiline output and is the default.
+* `:compact` writes one line and preserves member order when available.
+* `:canonical` makes data writers and `json->ron` emit canonical RON; `ron->json` emits RFC 8785 canonical JSON.
+
+Ordinary Clojure hash maps do not promise source order. Use a collection with meaningful iteration order or canonical mode when order matters.
+
+== Contributing
+
+See the https://github.com/outskirtslabs/ron-clj/blob/main/CONTRIBUTING.adoc[contributing guide] for development, testing, benchmarking, and documentation commands.
+
+== License
+
+Copyright © 2026 Casey Link <casey@outskirtslabs.com>.
+
+Distributed under the https://github.com/outskirtslabs/ron-clj/blob/main/LICENSE[MIT License].

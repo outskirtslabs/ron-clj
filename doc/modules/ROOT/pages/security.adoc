@@ -1,0 +1,5 @@
+= Security
+
+Report vulnerabilities through https://github.com/outskirtslabs/ron-clj/security/advisories[GitHub Security Advisories].
+
+For general policy and support expectations, see the https://docs.outskirtslabs.com/security-policy[Outskirts Labs Security Policy].

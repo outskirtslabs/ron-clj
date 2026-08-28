@@ -1,0 +1,18 @@
+{:manifest/version 1,
+ :project
+ {:id "ol.ron",
+  :coord "com.outskirtslabs/ron-clj",
+  :description
+  "Fast RON (Readable Object Notation) reader and writer for Clojure",
+  :license "MIT",
+  :platforms [:clj],
+  :status :experimental,
+  :created "2026-06-12",
+  :version "0.0.1"},
+ :docs
+ {:component "ol.ron",
+  :title "ol.ron",
+  :version "next",
+  :prerelease true,
+  :start-path "doc"},
+ :repo {:url "https://github.com/outskirtslabs/ron-clj"}}

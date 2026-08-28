@@ -1,0 +1,5 @@
+* xref:index.adoc[Home]
+* xref:changelog.adoc[Changelog]
+* xref:contributing.adoc[Contributing]
+* xref:security.adoc[Security]
+include::partial$api-nav.adoc[]

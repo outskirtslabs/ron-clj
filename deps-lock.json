@@ -5,6 +5,12 @@
       "rev": "3a298ad1d16875ff841079b1bfab087d3ef817ba",
       "sha256": "00isarmpyyb7ws68jw0y1qbqg4l0mf9z4fwmvhry9095cjm40kmn",
       "url": "https://github.com/Ramblurr/clojure-dev-repl.git"
+    },
+    "outskirtslabs/bb-tasks/9dbc6d77384b51ffde69007e98a0420b3cf6a0a7": {
+      "common_dir": "https/github.com/outskirtslabs/bb-tasks",
+      "rev": "9dbc6d77384b51ffde69007e98a0420b3cf6a0a7",
+      "sha256": "0b2iqd8l7x25h75agxb9f37kyv2lywpp4ffh7jccjgpxgz8yyxx3",
+      "url": "https://github.com/outskirtslabs/bb-tasks"
     }
   },
   "maven": {
@@ -88,6 +94,12 @@
     },
     "com/clojure-goes-fast/clj-async-profiler/1.7.0/clj-async-profiler-1.7.0.pom": {
       "sha256": "16364d91e2d1dc5ec9bae091f4b4a823c06871980adb44cded32925dee6378bf"
+    },
+    "com/cnuernber/charred/1.037/charred-1.037.jar": {
+      "sha256": "eb8d003309209a6940b3173ca479f766aa4664964ade363e69746ab78573c46a"
+    },
+    "com/cnuernber/charred/1.037/charred-1.037.pom": {
+      "sha256": "89f8f280072429fc797d840c93fbfd4d7a9a419f6cb2e55d1f967756f291edcb"
     },
     "com/cognitect/aws/api/0.8.824/api-0.8.824.jar": {
       "sha256": "4419ad593f5dd1852100aa4fb34afe1ff54b1f24251886666ba30db5cc4169ec"

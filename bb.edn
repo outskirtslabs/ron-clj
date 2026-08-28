@@ -1,12 +1,14 @@
 {:deps  {outskirtslabs/bb-tasks
          {:git/url "https://github.com/outskirtslabs/bb-tasks"
-          :git/sha "e868e28b18a0496ec4d39878f0307cb1df17da22"}}
+          :git/sha "9dbc6d77384b51ffde69007e98a0420b3cf6a0a7"}}
+ :pods  {clj-kondo/clj-kondo {:version "2026.01.19"}}
  :paths []
  :tasks {:requires
          ([clojure.string :as str]
-                            [clojure.pprint :refer [print-table]]
-                            [babashka.tasks :refer [shell]]
-                            [ol.bb-tasks.publish-clojars :as publish-clojars])
+          [clojure.pprint :refer [print-table]]
+          [babashka.tasks :refer [shell]]
+          [ol.bb-tasks.publish-clojars :as publish-clojars]
+          [ol.bb-tasks.gen-docs :as gen-docs])
 
          :init
          (do (def paths ["src" "test" "bench"]))
@@ -58,15 +60,19 @@
          {:doc     "Run CI checks: test, format check, and lint"
           :depends [test fmt:check lint]}
 
-         jar     {:override-builtin true
-                  :depends          [clean]
-                  :doc              "Build an jar"
-                  :task             (shell "clojure -T:build jar")}
+         gen-docs
+         {:doc  "Generate all Antora documentation"
+          :task (gen-docs/generate!)}
 
-         clean   {:override-builtin true
-                  :doc              "Clean build artifacts"
-                  :task             (shell "clojure -T:build clean")}
+         jar       {:override-builtin true
+                    :depends          [clean]
+                    :doc              "Build an jar"
+                    :task             (shell "clojure -T:build jar")}
 
-         publish {:doc     "Publish the clojure sdk libs to clojars"
-                  :depends [jar]
-                  :task    (publish-clojars/publish!)}}}
+         clean     {:override-builtin true
+                    :doc              "Clean build artifacts"
+                    :task             (shell "clojure -T:build clean")}
+
+         publish   {:doc     "Publish the clojure sdk libs to clojars"
+                    :depends [jar]
+                    :task    (publish-clojars/publish!)}}}
