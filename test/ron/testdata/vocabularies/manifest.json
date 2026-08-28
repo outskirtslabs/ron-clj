@@ -1,0 +1,348 @@
+{
+  "version": 1,
+  "description": "RON typed vocabulary fixtures",
+  "vocabularies": {
+    "https://ron.dev/vocab/core/v1": true,
+    "https://ron.dev/vocab/time/v1": true,
+    "https://ron.dev/vocab/network/v1": true,
+    "https://ron.dev/vocab/set/v1": true,
+    "https://ron.dev/vocab/math/v1": true,
+    "https://ron.dev/vocab/spatial/v1": true,
+    "https://ron.dev/vocab/color/v1": true,
+    "https://example.com/vocab/invoice/v1": false,
+    "https://ron.dev/vocab/geo/v1": true
+  },
+  "valid": [
+    {
+      "name": "core",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "core/input.json",
+      "expectedRON": "core/expected.ron"
+    },
+    {
+      "name": "time",
+      "vocabularies": [
+        "https://ron.dev/vocab/time/v1"
+      ],
+      "inputJSON": "time/input.json",
+      "expectedRON": "time/expected.ron"
+    },
+    {
+      "name": "network",
+      "vocabularies": [
+        "https://ron.dev/vocab/network/v1"
+      ],
+      "inputJSON": "network/input.json",
+      "expectedRON": "network/expected.ron"
+    },
+    {
+      "name": "set",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "set/input.json",
+      "expectedRON": "set/expected.ron"
+    },
+    {
+      "name": "math",
+      "vocabularies": [
+        "https://ron.dev/vocab/math/v1"
+      ],
+      "inputJSON": "math/input.json",
+      "expectedRON": "math/expected.ron"
+    },
+    {
+      "name": "spatial",
+      "vocabularies": [
+        "https://ron.dev/vocab/spatial/v1"
+      ],
+      "inputJSON": "spatial/input.json",
+      "expectedRON": "spatial/expected.ron"
+    },
+    {
+      "name": "color",
+      "vocabularies": [
+        "https://ron.dev/vocab/color/v1"
+      ],
+      "inputJSON": "color/input.json",
+      "expectedRON": "color/expected.ron"
+    },
+    {
+      "name": "geo",
+      "vocabularies": [
+        "https://ron.dev/vocab/geo/v1"
+      ],
+      "inputJSON": "geo/input.json",
+      "expectedRON": "geo/expected.ron"
+    },
+    {
+      "name": "custom",
+      "vocabularies": [
+        "https://example.com/vocab/invoice/v1"
+      ],
+      "inputJSON": "custom/input.json",
+      "expectedRON": "custom/expected.ron"
+    },
+    {
+      "name": "core_edge",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "core_edge/input.json",
+      "expectedRON": "core_edge/expected.ron"
+    },
+    {
+      "name": "time_edge",
+      "vocabularies": [
+        "https://ron.dev/vocab/time/v1"
+      ],
+      "inputJSON": "time_edge/input.json",
+      "expectedRON": "time_edge/expected.ron"
+    },
+    {
+      "name": "math_edge",
+      "vocabularies": [
+        "https://ron.dev/vocab/math/v1"
+      ],
+      "inputJSON": "math_edge/input.json",
+      "expectedRON": "math_edge/expected.ron"
+    },
+    {
+      "name": "spatial_edge",
+      "vocabularies": [
+        "https://ron.dev/vocab/spatial/v1"
+      ],
+      "inputJSON": "spatial_edge/input.json",
+      "expectedRON": "spatial_edge/expected.ron"
+    },
+    {
+      "name": "geo_edge",
+      "vocabularies": [
+        "https://ron.dev/vocab/geo/v1"
+      ],
+      "inputJSON": "geo_edge/input.json",
+      "expectedRON": "geo_edge/expected.ron"
+    },
+    {
+      "name": "color_edge",
+      "vocabularies": [
+        "https://ron.dev/vocab/color/v1"
+      ],
+      "inputJSON": "color_edge/input.json",
+      "expectedRON": "color_edge/expected.ron"
+    },
+    {
+      "name": "custom_edge",
+      "vocabularies": [
+        "https://example.com/vocab/invoice/v1"
+      ],
+      "inputJSON": "custom_edge/input.json",
+      "expectedRON": "custom_edge/expected.ron"
+    }
+  ],
+  "registry": "registry.json",
+  "invalid": [
+    {
+      "name": "core/wrong_arity",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "invalid/core/wrong_arity.json",
+      "reason": "typed value objects must have exactly one member"
+    },
+    {
+      "name": "core/bad_uuid",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "invalid/core/bad_uuid.json",
+      "reason": "invalid #uid payload"
+    },
+    {
+      "name": "core/bad_url",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "invalid/core/bad_url.json",
+      "reason": "invalid #url payload"
+    },
+    {
+      "name": "core/bad_regex_source",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "invalid/core/bad_regex_source.json",
+      "reason": "invalid #rx JavaScript RegExp source"
+    },
+    {
+      "name": "core/bad_regex_flags",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "invalid/core/bad_regex_flags.json",
+      "reason": "invalid #rx flags"
+    },
+    {
+      "name": "core/bad_tag_payload",
+      "vocabularies": [
+        "https://ron.dev/vocab/core/v1"
+      ],
+      "inputJSON": "invalid/core/bad_tag_payload.json",
+      "reason": "invalid #tag payload arity"
+    },
+    {
+      "name": "time/bad_utc",
+      "vocabularies": [
+        "https://ron.dev/vocab/time/v1"
+      ],
+      "inputJSON": "invalid/time/bad_utc.json",
+      "reason": "invalid #utc payload"
+    },
+    {
+      "name": "time/bad_duration_months",
+      "vocabularies": [
+        "https://ron.dev/vocab/time/v1"
+      ],
+      "inputJSON": "invalid/time/bad_duration_months.json",
+      "reason": "months are not allowed in #dur"
+    },
+    {
+      "name": "network/bad_ip4",
+      "vocabularies": [
+        "https://ron.dev/vocab/network/v1"
+      ],
+      "inputJSON": "invalid/network/bad_ip4.json",
+      "reason": "invalid #ip4 payload"
+    },
+    {
+      "name": "network/bad_cdr",
+      "vocabularies": [
+        "https://ron.dev/vocab/network/v1"
+      ],
+      "inputJSON": "invalid/network/bad_cdr.json",
+      "reason": "CIDR payload must be masked"
+    },
+    {
+      "name": "set/bad_set_payload",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "invalid/set/bad_set_payload.json",
+      "reason": "#set payload must be an array"
+    },
+    {
+      "name": "set/bad_bits_payload",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "invalid/set/bad_bits_payload.json",
+      "reason": "#bits payload must be an array"
+    },
+    {
+      "name": "set/bad_bits_negative",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "invalid/set/bad_bits_negative.json",
+      "reason": "#bits entries must be uint32 values"
+    },
+    {
+      "name": "set/bad_bits_fractional",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "invalid/set/bad_bits_fractional.json",
+      "reason": "#bits entries must be integers"
+    },
+    {
+      "name": "set/bad_bits_above_uint32",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "invalid/set/bad_bits_above_uint32.json",
+      "reason": "#bits entries must be at most 4294967295"
+    },
+    {
+      "name": "set/bad_bits_range_arity",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "invalid/set/bad_bits_range_arity.json",
+      "reason": "#bits ranges must have exactly two endpoints"
+    },
+    {
+      "name": "set/bad_bits_descending_range",
+      "vocabularies": [
+        "https://ron.dev/vocab/set/v1"
+      ],
+      "inputJSON": "invalid/set/bad_bits_descending_range.json",
+      "reason": "#bits ranges must not descend"
+    },
+    {
+      "name": "math/bad_iv3_length",
+      "vocabularies": [
+        "https://ron.dev/vocab/math/v1"
+      ],
+      "inputJSON": "invalid/math/bad_iv3_length.json",
+      "reason": "wrong #iv3 arity"
+    },
+    {
+      "name": "math/bad_f64_type",
+      "vocabularies": [
+        "https://ron.dev/vocab/math/v1"
+      ],
+      "inputJSON": "invalid/math/bad_f64_type.json",
+      "reason": "wrong #f64 payload type"
+    },
+    {
+      "name": "geo/bad_type",
+      "vocabularies": [
+        "https://ron.dev/vocab/geo/v1"
+      ],
+      "inputJSON": "invalid/geo/bad_type.json",
+      "reason": "invalid GeoJSON type"
+    },
+    {
+      "name": "geo/bad_coordinates",
+      "vocabularies": [
+        "https://ron.dev/vocab/geo/v1"
+      ],
+      "inputJSON": "invalid/geo/bad_coordinates.json",
+      "reason": "invalid GeoJSON coordinate shape"
+    },
+    {
+      "name": "color/bad_space",
+      "vocabularies": [
+        "https://ron.dev/vocab/color/v1"
+      ],
+      "inputJSON": "invalid/color/bad_space.json",
+      "reason": "unsupported #clr color space"
+    },
+    {
+      "name": "color/bad_rgb_arity",
+      "vocabularies": [
+        "https://ron.dev/vocab/color/v1"
+      ],
+      "inputJSON": "invalid/color/bad_rgb_arity.json",
+      "reason": "wrong #clr rgb arity"
+    },
+    {
+      "name": "color/bad_alpha_range",
+      "vocabularies": [
+        "https://ron.dev/vocab/color/v1"
+      ],
+      "inputJSON": "invalid/color/bad_alpha_range.json",
+      "reason": "wrong #clr alpha range"
+    }
+  ],
+  "invalidProfiles": [
+    {
+      "name": "unsupported_required_vocabulary",
+      "profile": "invalid/profile/unsupported_required.json",
+      "reason": "required vocabulary is unknown or unsupported"
+    }
+  ],
+  "schemas": "../../schemas/vocabularies"
+}

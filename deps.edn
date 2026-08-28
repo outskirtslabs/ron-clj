@@ -1,10 +1,11 @@
 {:paths   ["src" "target/classes"]
- :deps    {}
+ :deps    {org.clojure/clojure {:mvn/version "1.12.5"}}
  :aliases {:kaocha {:extra-paths ["test"]
                     :extra-deps  {lambdaisland/kaocha   {:mvn/version "1.91.1392"}
                                   com.cnuernber/charred {:mvn/version "1.037"}}
                     :main-opts   ["-m" "kaocha.runner"]}
            :dev    {:extra-paths ["dev"]
+                    :jvm-opts    ["--add-modules=jdk.incubator.vector"]
                     :extra-deps  {dev.weavejester/hashp                    {:mvn/version "0.5.1"}
                                   io.github.tonsky/clj-reload              {:mvn/version "1.0.0"}
                                   djblue/portal                            {:mvn/version "0.65.0"}
@@ -15,6 +16,9 @@
            :build  {:deps       {io.github.clojure/tools.build {:mvn/version "0.10.14"}
                                  slipset/deps-deploy           {:mvn/version "0.2.5"}}
                     :ns-default build}
+           :jmh    {:extra-paths ["bench" "target/jmh-classes"]
+                    :extra-deps  {jmh-clojure/jmh-clojure {:mvn/version "0.4.1"}}
+                    :main-opts   ["-m" "ol.ron.jmh"]}
            :neil   {:project {:name        com.outskirtslabs/TODO
                               :url         "https://example.com/TODO"
                               :license     {:id "TODO"}

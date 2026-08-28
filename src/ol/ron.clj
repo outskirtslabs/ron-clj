@@ -3,215 +3,249 @@
 (ns ol.ron
   "Fast RON (Readable Object Notation) for Clojure.
 
-  RON keeps the JSON data model while removing avoidable syntax: quotes,
-  colons, commas, and root braces are optional where unambiguous. See
-  https://github.com/starfederation/ron for the format reference. Note this
-  is not Rusty Object Notation.
+  RON keeps the JSON data model while removing punctuation where the meaning is
+  unambiguous. Pretty output is the default. Compact output preserves available
+  member order, and canonical output implements RFC 8785 and I-JSON.
 
-  ```ron
-  name Ada
-  age 37
-  roles [admin writer]
-  manager {# 200}
-  ```
-
-  ## Conversion
-
-  [[ron->json]] and [[json->ron]] convert between RON and JSON text. Both
-  preserve number source text exactly (`1E2`, `-0`, large integers), and both
-  have `:pretty` and compact output modes that match the reference
-  conformance corpus byte for byte.
-
-  ## Reading and writing Clojure data
-
-  [[read-string]] parses RON into Clojure maps, vectors, strings, numbers,
-  booleans, and nil. [[write-string]] renders Clojure data as RON.
-
-  ## Performance
-
-  Parsing and rendering run in a single Java class ([[ol.ron.Ron]]) that
-  scans `char[]` buffers with the techniques of tonsky/fast-edn: lookup-table
-  character classification, fast-path token scanning, and Strings built
-  directly from buffer slices."
+  [[read-string]] and [[read-bytes]] parse directly into Clojure data.
+  [[write-string]], [[write-bytes]], and [[write]] render Clojure data directly.
+  [[ron->json]] and [[json->ron]] preserve number source text outside canonical
+  mode."
   (:refer-clojure :exclude [read-string])
   (:import
-   [java.math BigInteger]
-   [java.util ArrayList HashMap List Map Map$Entry]
-   [ol.ron Ron Ron$Num]))
+   [clojure.lang IFn]
+   [java.io OutputStream]
+   [java.util ArrayList]
+   [ol.ron Ron Ron$Hook Ron$Mode]))
 
 (set! *warn-on-reflection* true)
 
-;;;; RON <-> JSON text conversion
+(defn- output-mode ^Ron$Mode [opts]
+  (when (and (contains? opts :mode) (contains? opts :pretty))
+    (throw (ex-info "Use either :mode or :pretty, not both"
+                    {:mode (:mode opts) :pretty (:pretty opts)})))
+  (let [mode (if (contains? opts :mode)
+               (:mode opts)
+               (if (contains? opts :pretty)
+                 (case (:pretty opts)
+                   true :pretty
+                   false :compact
+                   (throw (ex-info ":pretty must be true or false"
+                                   {:pretty (:pretty opts)})))
+                 :pretty))]
+    (case mode
+      :pretty Ron$Mode/PRETTY
+      :compact Ron$Mode/COMPACT
+      :canonical Ron$Mode/CANONICAL
+      (throw (ex-info "Unknown RON output mode"
+                      {:mode mode :supported #{:pretty :compact :canonical}})))))
+
+(defn- max-depth ^long [opts]
+  (let [depth (get opts :max-depth 1000)]
+    (when-not (and (integer? depth) (pos? depth) (<= depth Integer/MAX_VALUE))
+      (throw (ex-info ":max-depth must be a positive 32-bit integer"
+                      {:max-depth depth})))
+    (long depth)))
+
+(defn- key-options [opts]
+  (let [key-fn (get opts :key-fn identity)]
+    (when-not (ifn? key-fn)
+      (throw (ex-info ":key-fn must be callable" {:key-fn key-fn})))
+    (cond
+      (identical? key-fn identity) [nil 0]
+      (identical? key-fn keyword) [nil 1]
+      :else [key-fn 2])))
+
+(defn- typed-hooks ^ArrayList [opts]
+  (let [hooks (get opts :typed-value-hooks [])]
+    (when-not (sequential? hooks)
+      (throw (ex-info ":typed-value-hooks must be sequential"
+                      {:typed-value-hooks hooks})))
+    (ArrayList. ^java.util.Collection
+     (mapv (fn [hook]
+             (when-not (and (map? hook)
+                            (sequential? (:path hook))
+                            (contains? hook :replace-with)
+                            (every? #(or (string? %)
+                                         (and (integer? %) (not (neg? %))))
+                                    (:path hook)))
+               (throw (ex-info "Invalid typed-value hook" {:hook hook})))
+             (Ron$Hook. (vec (:path hook)) (:replace-with hook)))
+           hooks))))
 
 (defn ron->json
   "Converts RON text to JSON text.
 
-  Number source text is preserved exactly. Object keys are emitted in
-  Unicode code point order. Throws `ol.ron.Ron$ParseException` on invalid
-  input.
+  Pretty and compact modes preserve parsed member order and number spelling.
+  Canonical mode applies RFC 8785 and I-JSON.
 
   Options:
 
-  | key        | description
-  |------------|-------------
-  | `:pretty`  | Pretty-print with 2-space indent (default `false`, compact)
-
-  ```clojure
-  (ron->json \"name Ada\\nage 37\")
-  ;; => \"{\\\"age\\\":37,\\\"name\\\":\\\"Ada\\\"}\"
-  ```
+  | key          | description
+  |--------------|------------
+  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`
+  | `:pretty`    | Compatibility option used only when `:mode` is absent
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
 
   See also [[json->ron]]."
   (^String [^String ron]
-   (Ron/ronToJson ron false))
-  (^String [^String ron {:keys [pretty]}]
-   (Ron/ronToJson ron (boolean pretty))))
+   (Ron/ronToJson ron Ron$Mode/PRETTY))
+  (^String [^String ron opts]
+   (let [depth (max-depth opts)]
+     (Ron/writeJson (Ron/parseRon ron depth) (output-mode opts) depth))))
 
 (defn json->ron
   "Converts JSON text to RON text.
 
-  Number source text is preserved exactly. Object keys are emitted in
-  Unicode code point order. Throws `ol.ron.Ron$ParseException` on invalid
-  JSON, multiple roots, or trailing data.
+  Pretty output is the default and elides non-empty root-object braces. Typed
+  value hooks replace values by path before rendering and do not recurse into a
+  replacement value.
 
   Options:
 
-  | key        | description
-  |------------|-------------
-  | `:pretty`  | Pretty-print with 2-space indent and trailing newline (default `false`, compact)
-
-  Compact output elides root object braces; pretty output keeps them:
-
-  ```clojure
-  (json->ron \"{\\\"age\\\": 37, \\\"name\\\": \\\"Ada\\\"}\")
-  ;; => \"age 37 name Ada\"
-  ```
+  | key                  | description
+  |----------------------|------------
+  | `:mode`              | `:pretty` (default), `:compact`, or `:canonical`
+  | `:pretty`            | Compatibility option used only when `:mode` is absent
+  | `:max-depth`         | Maximum object/array nesting depth (default `1000`)
+  | `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`
 
   See also [[ron->json]]."
   (^String [^String json]
-   (Ron/jsonToRon json false))
-  (^String [^String json {:keys [pretty]}]
-   (Ron/jsonToRon json (boolean pretty))))
-
-;;;; RON -> Clojure data
-
-(defn- num->clj
-  "Realizes a number kept as source text: integers become longs (or bigints
-   on overflow), anything with a fraction or exponent becomes a double."
-  [^String text]
-  (if (or (.contains text ".") (.contains text "e") (.contains text "E"))
-    (Double/parseDouble text)
-    (try
-      (Long/parseLong text)
-      (catch NumberFormatException _
-        (bigint (BigInteger. text))))))
-
-(defn- model->clj [v key-fn]
-  (cond
-    (instance? Ron$Num v)
-    (num->clj (.-text ^Ron$Num v))
-
-    (instance? Map v)
-    (persistent!
-     (reduce (fn [acc ^Map$Entry e]
-               (assoc! acc (key-fn (.getKey e)) (model->clj (.getValue e) key-fn)))
-             (transient {})
-             (.entrySet ^Map v)))
-
-    (instance? List v)
-    (mapv #(model->clj % key-fn) v)
-
-    :else v))
+   (Ron/jsonToRon json Ron$Mode/PRETTY))
+  (^String [^String json opts]
+   (Ron/jsonToRon json (output-mode opts) (typed-hooks opts) (max-depth opts))))
 
 (defn read-string
-  "Parses RON text into Clojure data.
+  "Parses RON text directly into Clojure data.
 
-  Objects become maps, arrays become vectors. Integers are read as longs
-  (bigints on overflow); numbers with a fraction or exponent as doubles. Use
-  [[ron->json]] when exact number text matters. Throws
-  `ol.ron.Ron$ParseException` on invalid input, including empty input.
+  Objects become maps, arrays become vectors, integers become longs or bigints,
+  and decimal/exponent numbers become doubles.
 
   Options:
 
-  | key        | description
-  |------------|-------------
-  | `:key-fn`  | Applied to each object key string (default `identity`)
+  | key          | description
+  |--------------|------------
+  | `:key-fn`    | Function applied to every object key (default `identity`)
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
 
-  ```clojure
-  (read-string \"name Ada\\nroles [admin writer]\" {:key-fn keyword})
-  ;; => {:name \"Ada\", :roles [\"admin\" \"writer\"]}
-  ```
-
-  See also [[write-string]]."
+  The built-in `identity` and `keyword` key functions use cached key paths.
+  See also [[read-bytes]] and [[write-string]]."
   ([^String ron]
-   (model->clj (Ron/parseRon ron) identity))
-  ([^String ron {:keys [key-fn] :or {key-fn identity}}]
-   (model->clj (Ron/parseRon ron) key-fn)))
+   (Ron/readRon ron nil 0 1000))
+  ([^String ron opts]
+   (let [[key-fn key-mode] (key-options opts)]
+     (Ron/readRon ron ^IFn key-fn (int key-mode) (max-depth opts)))))
 
-;;;; Clojure data -> RON
+(defn read-bytes
+  "Parses a UTF-8 byte array directly into Clojure data.
 
-(defn- key->str ^String [k]
-  (cond
-    (string? k) k
-    (keyword? k) (if-let [ns (namespace k)] (str ns "/" (name k)) (name k))
-    (symbol? k) (str k)
-    :else (throw (ex-info "RON object keys must be strings, keywords, or symbols"
-                          {:key k :type (type k)}))))
+  Malformed UTF-8 throws [[ol.ron.Ron$ParseException]] with a byte offset.
 
-(defn- number->text ^String [n]
-  (cond
-    (or (instance? Double n) (instance? Float n))
-    (let [d (double n)]
-      (when (or (Double/isNaN d) (Double/isInfinite d))
-        (throw (ex-info "NaN and infinity have no RON representation" {:value n})))
-      (str d))
+  Options:
 
-    (instance? clojure.lang.Ratio n)
-    (throw (ex-info "Ratios have no RON representation; convert explicitly" {:value n}))
+  | key          | description
+  |--------------|------------
+  | `:key-fn`    | Function applied to every object key (default `identity`)
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
 
-    :else (str n)))
-
-(defn- clj->model [v]
-  (cond
-    (nil? v) nil
-    (boolean? v) v
-    (string? v) v
-    (number? v) (Ron$Num. (number->text v))
-    (keyword? v) (key->str v)
-    (symbol? v) (str v)
-    (map? v) (let [m (HashMap. (* 2 (count v)))]
-               (reduce-kv (fn [^HashMap m k val]
-                            (.put m (key->str k) (clj->model val))
-                            m)
-                          m v))
-    (sequential? v) (let [a (ArrayList. (count v))]
-                      (doseq [x v]
-                        (.add a (clj->model x)))
-                      a)
-    :else (throw (ex-info "Value has no RON representation"
-                          {:value v :type (type v)}))))
+  See also [[read-string]] and [[write-bytes]]."
+  ([^bytes input]
+   (Ron/readRon input nil 0 1000))
+  ([^bytes input opts]
+   (let [[key-fn key-mode] (key-options opts)]
+     (Ron/readRon input ^IFn key-fn (int key-mode) (max-depth opts)))))
 
 (defn write-string
-  "Renders Clojure data as RON text.
+  "Renders Clojure data directly as RON text.
 
-  Map keys may be strings, keywords, or symbols (keywords and symbols render
-  as their names). Values may be nil, booleans, strings, numbers, keywords,
-  symbols, maps, and sequential collections. NaN, infinity, and ratios throw
-  since JSON has no representation for them.
+  Map keys may be strings, keywords, or symbols. Values may be nil, booleans,
+  strings, finite numbers, keywords, symbols, maps, and sequential collections.
 
   Options:
 
-  | key        | description
-  |------------|-------------
-  | `:pretty`  | Pretty-print with 2-space indent and trailing newline (default `false`, compact)
+  | key       | description
+  |-----------|------------
+  | `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
+  | `:pretty` | Compatibility option used only when `:mode` is absent
+  | `:max-depth` | Maximum collection nesting depth (default `1000`)
 
-  ```clojure
-  (write-string {:name \"Ada\" :roles [\"admin\" \"writer\"]})
-  ;; => \"name Ada roles[admin writer]\"
-  ```
-
-  See also [[read-string]]."
+  See also [[write-bytes]] and [[read-string]]."
   (^String [data]
-   (Ron/writeRon (clj->model data) false))
-  (^String [data {:keys [pretty]}]
-   (Ron/writeRon (clj->model data) (boolean pretty))))
+   (Ron/writeData data Ron$Mode/PRETTY))
+  (^String [data opts]
+   (Ron/writeData data (output-mode opts) (max-depth opts))))
+
+(defn write-bytes
+  "Renders Clojure data directly as UTF-8 RON bytes.
+
+  Options:
+
+  | key       | description
+  |-----------|------------
+  | `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
+  | `:pretty` | Compatibility option used only when `:mode` is absent
+  | `:max-depth` | Maximum collection nesting depth (default `1000`)
+
+  See also [[write]] and [[write-string]]."
+  ([data]
+   (Ron/writeDataBytes data Ron$Mode/PRETTY))
+  ([data opts]
+   (Ron/writeDataBytes data (output-mode opts) (max-depth opts))))
+
+(defn write
+  "Writes UTF-8 RON to `output-stream`, flushes it, and returns it.
+
+  The function does not close the caller's stream.
+
+  Options:
+
+  | key       | description
+  |-----------|------------
+  | `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
+  | `:pretty` | Compatibility option used only when `:mode` is absent
+  | `:max-depth` | Maximum collection nesting depth (default `1000`)
+
+  See also [[write-bytes]]."
+  (^OutputStream [data ^OutputStream output-stream]
+   (Ron/writeData data output-stream Ron$Mode/PRETTY))
+  (^OutputStream [data ^OutputStream output-stream opts]
+   (Ron/writeData data output-stream (output-mode opts) (max-depth opts))))
+
+(defn ron-bytes->json-bytes
+  "Converts UTF-8 RON bytes to UTF-8 JSON bytes.
+
+  Options:
+
+  | key          | description
+  |--------------|------------
+  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`
+  | `:pretty`    | Compatibility option used only when `:mode` is absent
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
+
+  See also [[ron->json]]."
+  ([^bytes input]
+   (Ron/ronToJson input Ron$Mode/PRETTY 1000))
+  ([^bytes input opts]
+   (Ron/ronToJson input (output-mode opts) (max-depth opts))))
+
+(defn json-bytes->ron-bytes
+  "Converts UTF-8 JSON bytes to UTF-8 RON bytes.
+
+  Options:
+
+  | key                  | description
+  |----------------------|------------
+  | `:mode`              | `:pretty` (default), `:compact`, or `:canonical`
+  | `:pretty`            | Compatibility option used only when `:mode` is absent
+  | `:max-depth`         | Maximum object/array nesting depth (default `1000`)
+  | `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`
+
+  See also [[json->ron]]."
+  ([^bytes input]
+   (Ron/jsonToRon input Ron$Mode/PRETTY (ArrayList.) 1000))
+  ([^bytes input opts]
+   (Ron/jsonToRon input
+                  (output-mode opts)
+                  (typed-hooks opts)
+                  (max-depth opts))))

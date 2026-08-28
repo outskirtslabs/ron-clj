@@ -39,8 +39,8 @@
 
 (printf "RON doc: %.2f MB, JSON doc: %.2f MB%n" (mb ron-doc) (mb json-doc))
 (bench "Ron/parseRon (RON -> model)" ron-doc #(Ron/parseRon %))
-(bench "ron->json compact" ron-doc #(ron/ron->json %))
+(bench "ron->json compact" ron-doc #(ron/ron->json % {:mode :compact}))
 (bench "ron/read-string (RON -> Clojure)" ron-doc #(ron/read-string %))
 (bench "Ron/parseJson (JSON -> model)" json-doc #(Ron/parseJson %))
-(bench "json->ron compact" json-doc #(ron/json->ron %))
+(bench "json->ron compact" json-doc #(ron/json->ron % {:mode :compact}))
 (bench "charred read-json (reference)" json-doc #(charred/read-json %))

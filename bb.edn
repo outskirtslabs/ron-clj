@@ -9,7 +9,7 @@
                             [ol.bb-tasks.publish-clojars :as publish-clojars])
 
          :init
-         (do (def paths ["src" "test"]))
+         (do (def paths ["src" "test" "bench"]))
 
          dev
          {:doc  "Start a local development server"
@@ -18,6 +18,11 @@
          test
          {:doc  "Run all tests or specific test suites"
           :task (apply clojure "-M:dev:kaocha" *command-line-args*)}
+
+         jmh
+         {:doc  "Run JMH benchmarks"
+          :task (do (.mkdirs (java.io.File. "target/jmh-classes"))
+                    (apply clojure "-M:jmh" *command-line-args*))}
 
          fmt
          {:doc  "Format code with cljfmt"

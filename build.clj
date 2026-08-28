@@ -63,7 +63,11 @@
   (b/javac {:src-dirs   ["src"]
             :class-dir  class-dir
             :basis      @basis_
-            :javac-opts ["-proc:none" "--release" "11"]}))
+            :javac-opts ["-proc:none"
+                         "--release" "25"
+                         "--add-modules" "jdk.incubator.vector"
+                         "-Xlint:all"
+                         "-Werror"]}))
 
 (defn jar [_]
   (compile-java {})
