@@ -81,11 +81,11 @@
 
   Options:
 
-  | key          | description
-  |--------------|------------
-  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`
-  | `:pretty`    | Compatibility option used only when `:mode` is absent
-  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
+  | key          | description                                           |
+  |--------------|-------------------------------------------------------|
+  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`      |
+  | `:pretty`    | Compatibility option used only when `:mode` is absent |
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)   |
 
   See also [[json->ron]]."
   (^String [^String ron]
@@ -103,12 +103,12 @@
 
   Options:
 
-  | key                  | description
-  |----------------------|------------
-  | `:mode`              | `:pretty` (default), `:compact`, or `:canonical`
-  | `:pretty`            | Compatibility option used only when `:mode` is absent
-  | `:max-depth`         | Maximum object/array nesting depth (default `1000`)
-  | `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`
+  | key                  | description                                           |
+  |----------------------|-------------------------------------------------------|
+  | `:mode`              | `:pretty` (default), `:compact`, or `:canonical`      |
+  | `:pretty`            | Compatibility option used only when `:mode` is absent |
+  | `:max-depth`         | Maximum object/array nesting depth (default `1000`)   |
+  | `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`    |
 
   See also [[ron->json]]."
   (^String [^String json]
@@ -124,10 +124,10 @@
 
   Options:
 
-  | key          | description
-  |--------------|------------
-  | `:key-fn`    | Function applied to every object key (default `identity`)
-  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
+  | key          | description                                               |
+  |--------------|-----------------------------------------------------------|
+  | `:key-fn`    | Function applied to every object key (default `identity`) |
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)       |
 
   The built-in `identity` and `keyword` key functions use cached key paths.
   See also [[read-bytes]] and [[write-string]]."
@@ -144,10 +144,10 @@
 
   Options:
 
-  | key          | description
-  |--------------|------------
-  | `:key-fn`    | Function applied to every object key (default `identity`)
-  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
+  | key          | description                                               |
+  |--------------|-----------------------------------------------------------|
+  | `:key-fn`    | Function applied to every object key (default `identity`) |
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)       |
 
   See also [[read-string]] and [[write-bytes]]."
   ([^bytes input]
@@ -164,11 +164,11 @@
 
   Options:
 
-  | key       | description
-  |-----------|------------
-  | `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
-  | `:pretty` | Compatibility option used only when `:mode` is absent
-  | `:max-depth` | Maximum collection nesting depth (default `1000`)
+  | key          | description                                           |
+  |--------------|-------------------------------------------------------|
+  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`      |
+  | `:pretty`    | Compatibility option used only when `:mode` is absent |
+  | `:max-depth` | Maximum collection nesting depth (default `1000`)     |
 
   See also [[write-bytes]] and [[read-string]]."
   (^String [data]
@@ -181,11 +181,11 @@
 
   Options:
 
-  | key       | description
-  |-----------|------------
-  | `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
-  | `:pretty` | Compatibility option used only when `:mode` is absent
-  | `:max-depth` | Maximum collection nesting depth (default `1000`)
+  | key          | description                                           |
+  |--------------|-------------------------------------------------------|
+  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`      |
+  | `:pretty`    | Compatibility option used only when `:mode` is absent |
+  | `:max-depth` | Maximum collection nesting depth (default `1000`)     |
 
   See also [[write]] and [[write-string]]."
   ([data]
@@ -200,11 +200,11 @@
 
   Options:
 
-  | key       | description
-  |-----------|------------
-  | `:mode`   | `:pretty` (default), `:compact`, or `:canonical`
-  | `:pretty` | Compatibility option used only when `:mode` is absent
-  | `:max-depth` | Maximum collection nesting depth (default `1000`)
+  | key          | description                                           |
+  |--------------|-------------------------------------------------------|
+  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`      |
+  | `:pretty`    | Compatibility option used only when `:mode` is absent |
+  | `:max-depth` | Maximum collection nesting depth (default `1000`)     |
 
   See also [[write-bytes]]."
   (^OutputStream [data ^OutputStream output-stream]
@@ -217,11 +217,11 @@
 
   Options:
 
-  | key          | description
-  |--------------|------------
-  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`
-  | `:pretty`    | Compatibility option used only when `:mode` is absent
-  | `:max-depth` | Maximum object/array nesting depth (default `1000`)
+  | key          | description                                           |
+  |--------------|-------------------------------------------------------|
+  | `:mode`      | `:pretty` (default), `:compact`, or `:canonical`      |
+  | `:pretty`    | Compatibility option used only when `:mode` is absent |
+  | `:max-depth` | Maximum object/array nesting depth (default `1000`)   |
 
   See also [[ron->json]]."
   ([^bytes input]
@@ -234,12 +234,12 @@
 
   Options:
 
-  | key                  | description
-  |----------------------|------------
-  | `:mode`              | `:pretty` (default), `:compact`, or `:canonical`
-  | `:pretty`            | Compatibility option used only when `:mode` is absent
-  | `:max-depth`         | Maximum object/array nesting depth (default `1000`)
-  | `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`
+  | key                  | description                                           |
+  |----------------------|-------------------------------------------------------|
+  | `:mode`              | `:pretty` (default), `:compact`, or `:canonical`      |
+  | `:pretty`            | Compatibility option used only when `:mode` is absent |
+  | `:max-depth`         | Maximum object/array nesting depth (default `1000`)   |
+  | `:typed-value-hooks` | Path replacements with `:path` and `:replace-with`    |
 
   See also [[json->ron]]."
   ([^bytes input]
